@@ -31,11 +31,11 @@ def generate_commit_message(diff):
     tokens = tokenizer.encode(diff)
     tokens = tokens[:15900]
     diff = tokenizer.decode(tokens)
-    prompt = "Generate a commit message for the following diff:\n\n" + diff
-    
+    prompt = "Can you commit this diff for me:\n\n" + diff
+
     response = openai.ChatCompletion.create(
         messages=[
-            {'role': 'system', 'content': "You write short and informative commit messages"},
+            {'role': 'system', 'content': "You call the git commit function with short and informative commit messages"},
             {'role': 'user', 'content': prompt},
         ],
         functions=[commit_schema],
