@@ -26,6 +26,7 @@ commit_schema = {
 
 def generate_commit_message(diff):
     if len(diff) == 0:
+        print('EMPTY DIFF')
         return 'default commit message'
 
     tokens = tokenizer.encode(diff)
