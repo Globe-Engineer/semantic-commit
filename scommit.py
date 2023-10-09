@@ -26,7 +26,7 @@ commit_schema = {
 
 def generate_commit_message(diff):
     if len(diff) == 0:
-        print('EMPTY DIFF')
+        # print('EMPTY DIFF')
         return 'default commit message'
 
     tokens = tokenizer.encode(diff)
@@ -59,7 +59,7 @@ def scommit():
     args, unknown = parser.parse_known_args()
 
     if args.m is None:
-        diff = subprocess.check_output(['git', 'diff', '--cached'], text=True).strip()
+        diff = subprocess.check_output(['git', 'diff', 'HEAD'], text=True).strip()
         message = generate_commit_message(diff)
     else:
         message = args.m
