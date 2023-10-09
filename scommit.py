@@ -35,7 +35,7 @@ def generate_commit_message(diff):
     try:
         response = openai.ChatCompletion.create(
             messages=[
-                {'role': 'system', 'content': "You write short and informative commit messages."},
+                {'role': 'system', 'content': "You write short and informative commit messages"},
                 {'role': 'user', 'content': prompt},
             ],
             functions=[commit_schema],
@@ -47,6 +47,7 @@ def generate_commit_message(diff):
         commit_message = args['commit_message']
         return commit_message
     except Exception as e:
+        print(e)
         return 'default commit message'
 
 
