@@ -26,30 +26,26 @@ commit_schema = {
 
 def generate_commit_message(diff):
     if len(diff) == 0:
-        # print('EMPTY DIFF')
         return 'default commit message'
 
     tokens = tokenizer.encode(diff)
     tokens = tokens[:15900]
     diff = tokenizer.decode(tokens)
     prompt = "Generate a commit message for the following diff:\n\n" + diff
-    try:
-        response = openai.ChatCompletion.create(
-            messages=[
-                {'role': 'system', 'content': "You write short and informative commit messages"},
-                {'role': 'user', 'content': prompt},
-            ],
-            functions=[commit_schema],
-            function_call={'name': 'git_commit'},
-            model='gpt-3.5-turbo-16k',
-            temperature=0.5,
-        )
-        args = json.loads(response.choices[0]['message']['function_call']['arguments'])
-        commit_message = args['commit_message']
-        return commit_message
-    except Exception as e:
-        print(e)
-        return 'default commit message'
+    
+    response = openai.ChatCompletion.create(
+        messages=[
+            {'role': 'system', 'content': "You write short and informative commit messages"},
+            {'role': 'user', 'content': prompt},
+        ],
+        functions=[commit_schema],
+        function_call={'name': 'git_commit'},
+        model='gpt-3.5-turbo-16k',
+        temperature=0.5,
+    )
+    args = json.loads(response.choices[0]['message']['function_call']['arguments'])
+    commit_message = args['commit_message']
+    return commit_message
 
 
 def scommit():
