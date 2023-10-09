@@ -11,7 +11,7 @@ is equivalent to:
 Think of `scommit` as an alias for `git commit` that appends `-m "message"` with an auto-generated message. That's it! I recommend using this when you don't actually care about commit messages, but want them to be slightly more informative than "sdflskdjafks". Plus, it uses more GPU's than regular commits, and we all know GPU usage is a proxy for agency.
 
 ## Installation
-`pip install scommit`
+`pip install semantic-commit`
 
 You should get command-line tool called `scommit` that you can use just like git commmit.
 
