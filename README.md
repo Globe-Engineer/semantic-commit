@@ -3,6 +3,18 @@
 Semantic Commit (scommit) is a Python script that uses the ChatGPT API to auto-generate commit messages for your git commits. You can use it exactly like `git commit`:
 
 ```bash
+scommit
+```
+
+is equivalent to:
+
+```bash
+git commit -m "auto-generated commit message"
+```
+
+You can also use all of the args you normally would with `git commit`, for example:
+
+```bash
 scommit -a
 ```
 
