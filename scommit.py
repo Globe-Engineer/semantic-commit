@@ -16,7 +16,7 @@ commit_schema = {
         "type": "object",
         "properties": {
             "commit_message": {
-                "description": "A short message describing the commit",
+                "description": "A short but descriptive commit message",
                 "type": "string"
             }
         },
@@ -34,7 +34,10 @@ def generate_commit_message(diff):
     prompt = "Generate a commit message for the following diff:\n\n" + diff
     try:
         response = openai.ChatCompletion.create(
-            messages=[{'role': 'user', 'content': prompt}],
+            messages=[
+                {'role': 'system', 'content': "You write short and informative commit messages"},
+                {'role': 'user', 'content': prompt},
+            ],
             functions=[commit_schema],
             function_call={'name': 'git_commit'},
             model='gpt-3.5-turbo-16k',
