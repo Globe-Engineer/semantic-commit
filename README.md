@@ -18,3 +18,7 @@ You should get command-line tool called `scommit` that you can use just like git
 You also need to set your [OpenAI API key](https://platform.openai.com/account/api-keys) as an environment variable named OPENAI_API_KEY for scommit to work. Add this line in your `.bashrc` or `.zshrc`:
 
 `export OPENAI_API_KEY=your-api-key`
+
+## License
+
+This project is licensed under the terms of the MIT license. See the [LICENSE](LICENSE) file for details.
