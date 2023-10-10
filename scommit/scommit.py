@@ -54,11 +54,18 @@ def scommit():
     parser.add_argument('-m', type=str, help='Commit message')
     args, unknown = parser.parse_known_args()
 
-    if args.m is None:
+    try:
+        # Check if there are any commits
+        subprocess.check_output(['git', 'rev-parse', '--verify', 'HEAD'], text=True).strip()
+        no_commits = False
+    except subprocess.CalledProcessError:
+        no_commits = True
+
+    if args.m is None and not no_commits:
         diff = subprocess.check_output(['git', 'diff', 'HEAD'], text=True).strip()
         message = generate_commit_message(diff)
     else:
-        message = args.m
+        message = args.m if args.m is not None else 'Initial commit'
 
     unknown = [u if ' ' not in u else f'"{u}"' for u in unknown]
     cmd = f'git commit {" ".join(unknown)} -m "{message}"'
