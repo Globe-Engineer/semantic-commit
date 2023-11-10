@@ -3,10 +3,12 @@ import sys
 import json
 import subprocess
 
-import openai
+from openai import OpenAI
+
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 import tiktoken
 
-openai.api_key = os.environ["OPENAI_API_KEY"]
+
 tokenizer = tiktoken.encoding_for_model('gpt-3.5-turbo')
 
 commit_schema = {
@@ -33,16 +35,14 @@ def generate_commit_message(diff):
     diff = tokenizer.decode(tokens)
     prompt = "Can you commit this diff for me:\n\n" + diff
 
-    response = openai.ChatCompletion.create(
-        messages=[
-            {'role': 'system', 'content': "You call the git commit function with short and informative commit messages"},
-            {'role': 'user', 'content': prompt},
-        ],
-        functions=[commit_schema],
-        function_call={'name': 'git_commit'},
-        model='gpt-3.5-turbo-16k',
-        temperature=0.5,
-    )
+    response = client.chat.completions.create(messages=[
+        {'role': 'system', 'content': "You call the git commit function with short and informative commit messages"},
+        {'role': 'user', 'content': prompt},
+    ],
+    functions=[commit_schema],
+    function_call={'name': 'git_commit'},
+    model='gpt-3.5-turbo-16k',
+    temperature=0.5)
     args = json.loads(response.choices[0]['message']['function_call']['arguments'])
     commit_message = args['commit_message']
     return commit_message
