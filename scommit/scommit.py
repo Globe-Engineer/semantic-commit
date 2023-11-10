@@ -9,7 +9,6 @@ client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 import tiktoken
 
 
-
 tokenizer = tiktoken.encoding_for_model('gpt-3.5-turbo')
 
 commit_schema = {
