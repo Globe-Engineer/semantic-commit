@@ -9,6 +9,7 @@ client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 import tiktoken
 
 
+
 tokenizer = tiktoken.encoding_for_model('gpt-3.5-turbo')
 
 commit_schema = {
@@ -43,7 +44,7 @@ def generate_commit_message(diff):
     function_call={'name': 'git_commit'},
     model='gpt-3.5-turbo-16k',
     temperature=0.5)
-    args = json.loads(response.choices[0]['message']['function_call']['arguments'])
+    args = json.loads(response.choices[0].message.function_call.arguments)
     commit_message = args['commit_message']
     return commit_message
 
