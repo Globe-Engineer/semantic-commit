@@ -2,14 +2,16 @@ import os
 import sys
 import json
 import subprocess
-
+from transformers import AutoTokenizer 
+from requests import Response
 from openai import OpenAI
 
-client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+# client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 import tiktoken
 
 
 tokenizer = tiktoken.encoding_for_model('gpt-3.5-turbo')
+tokenizer2 = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
 
 commit_schema = {
     "name": "git_commit",
@@ -30,22 +32,48 @@ def generate_commit_message(diff):
     if len(diff) == 0:
         return 'default commit message'
 
-    tokens = tokenizer.encode(diff)
-    tokens = tokens[:15900]
-    diff = tokenizer.decode(tokens)
-    prompt = "Can you commit this diff for me:\n\n" + diff
+    tokens = tokenizer2.encode(diff)
+    # tokens = tokens[:15900]
+    tokens = tokens[:7000]
+    diff = tokenizer2.decode(tokens)
+    prompt = "Create a commit message based on this diff, max 15 words\n\n" + diff
 
-    response = client.chat.completions.create(messages=[
-        {'role': 'system', 'content': "You call the git commit function with short and informative commit messages"},
-        {'role': 'user', 'content': prompt},
-    ],
-    functions=[commit_schema],
-    function_call={'name': 'git_commit'},
-    model='gpt-3.5-turbo-16k',
-    temperature=0.5)
-    args = json.loads(response.choices[0].message.function_call.arguments)
-    commit_message = args['commit_message']
-    return commit_message
+    # response = client.chat.completions.create(messages=[
+    #     {'role': 'system', 'content': "You call the git commit function with short and informative commit messages"},
+    #     {'role': 'user', 'content': prompt},
+    # ],
+    # functions=[commit_schema],
+    # function_call={'name': 'git_commit'},
+    # # model='gpt-3.5-turbo-16k',
+    # model='mistral',
+    # temperature=0.5)
+
+    # args = json.loads(response.choices[0].message.function_call.arguments)
+    # commit_message = args['commit_message']
+    import requests
+    data = {
+        "model": "mistral",
+        "prompt": "{prompt}".format(prompt=prompt),
+    }
+    response = requests.post("http://localhost:11434/api/generate", json=data)
+
+    # commit_message = response.json()['commit_message']
+    print(response)
+    print(response.text)
+    import json
+
+
+
+    json_strings = response.text.strip().split('\n')
+
+    responses = [json.loads(js)["response"] for js in json_strings]
+    print(responses)
+    result = "".join(responses)
+
+    print(result)  # Outputs: "1. Hello"
+    # print(response.json())
+    # return commit_message
+    return result
 
 
 def scommit():
@@ -67,8 +95,10 @@ def scommit():
     else:
         message = args.m if args.m is not None else 'Initial commit'
 
-    unknown = [u if ' ' not in u else f'"{u}"' for u in unknown]
-    cmd = f'git commit {" ".join(unknown)} -m "{message}"'
+    message = message.replace('"', '\\"')
+
+    cmd = f'git commit -a -m "{message}"'
+    print(cmd)
     os.system(cmd)
     
 
