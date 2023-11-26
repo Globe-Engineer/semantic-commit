@@ -1,15 +1,13 @@
 import os
-import sys
 import json
 import subprocess
-from transformers import AutoTokenizer 
+from transformers import AutoTokenizer, AutoModelForCausalLM
 from openai import OpenAI
 import requests
-
+import torch
 import tiktoken
+import argparse
 
-
-tokenizer2 = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
 
 commit_schema = {
     "name": "git_commit",
@@ -27,9 +25,9 @@ commit_schema = {
 }
 
 def generate_commit_message_mistral(diff):
+    """Generate commit message using Mistral AI."""
     tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
     tokens = tokenizer.encode(diff)
-    # TODO: confirm max length
     tokens = tokens[:7999]
     diff = tokenizer.decode(tokens)
     prompt = "Create a commit message based on this diff, max 15 words\n\n" + diff
@@ -38,24 +36,40 @@ def generate_commit_message_mistral(diff):
         "prompt": "{prompt}".format(prompt=prompt),
     }
     response = requests.post("http://localhost:11434/api/generate", json=data)
-
-    # commit_message = response.json()['commit_message']
-    print(response)
-    print(response.text)
-
-
-
     json_strings = response.text.strip().split('\n')
-
     responses = [json.loads(js)["response"] for js in json_strings]
     result = "".join(responses)
     print("Commit message: ", result)
 
     return result
     
+def wip_hf_mistral2(diff):
+    """Generate commit message using Mistral AI."""
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def generate_commit_message(diff):
-    
+    # TODO: My pc dies here lol
+    model = AutoModelForCausalLM.from_pretrained("mistralai/Mistral-7B-v0.1")
+    tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
+
+    tokens = tokenizer.encode(diff)
+    tokens = tokens[:7999]
+    diff = tokenizer.decode(tokens)
+    prompt = "Create a commit message based on this diff, max 15 words\n\n" + diff
+    data = {
+        "model": "mistral",
+        "prompt": "{prompt}".format(prompt=prompt),
+    }
+    model_inputs = tokenizer([prompt], return_tensors="pt").to(device)
+    model.to(device)
+    generated_ids = model.generate(**model_inputs, max_new_tokens=100, do_sample=True)
+    result = tokenizer.batch_decode(generated_ids)[0]
+    print("Commit message: ", result)
+    x = input("Press enter to continue")
+    return result
+
+def generate_commit_message_gpt(diff):
+    """Generate commit message using OpenAI's ChatGPT."""
+
     client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
     tokenizer = tiktoken.encoding_for_model('gpt-3.5-turbo')
 
@@ -81,7 +95,8 @@ def generate_commit_message(diff):
 
 
 def scommit():
-    import argparse
+    """Perform a git commit with a generated or provided message."""
+
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', type=str, help='Commit message')
     parser.add_argument('-mi', action='store_true', help='Using mistral')
@@ -101,12 +116,12 @@ def scommit():
     
     elif args.m is None and commits_exist:
         diff = subprocess.check_output(['git', 'diff', 'HEAD'], text=True).strip()
-        message = generate_commit_message(diff)
+        message = generate_commit_message_gpt(diff)
+
     else:
         message = args.m if args.m is not None else 'Initial commit'
 
     cmd = f'git commit -m "{message}"'
-    print(cmd)
     os.system(cmd)
     
 

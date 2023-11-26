@@ -11,7 +11,7 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/Globe-Knowledge-Solutions/semantic-commit',
     author='Ivan Yevenko, Parth Sareen',
-    author_email='ivan@globe.engineer, Parth Sareen',
+    author_email='ivan@globe.engineer, psareen@uwaterloo.ca',
     license='MIT',
     packages=find_packages(),
     install_requires=[
