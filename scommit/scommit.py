@@ -34,6 +34,7 @@ def generate_commit_message_mistral(diff):
     data = {
         "model": "mistral",
         "prompt": "{prompt}".format(prompt=prompt),
+        "stream": False,
     }
     response = requests.post("http://localhost:11434/api/generate", json=data)
     json_strings = response.text.strip().split('\n')
