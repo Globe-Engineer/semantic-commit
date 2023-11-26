@@ -111,6 +111,7 @@ def scommit():
         commits_exist = False
 
     if commits_exist and args.mi:
+        print('wat')
         diff = subprocess.check_output(['git', 'diff', 'HEAD'], text=True).strip()
         message = generate_commit_message_mistral(diff)
         message = message.replace('"', '\\"')
