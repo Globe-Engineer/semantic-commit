@@ -44,30 +44,11 @@ def generate_commit_message_mistral(diff):
 
     return result
     
-def wip_hf_mistral2(diff):
-    """Generate commit message using Mistral AI."""
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    # TODO: My pc dies here lol
-    model = AutoModelForCausalLM.from_pretrained("mistralai/Mistral-7B-v0.1")
-    tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
-
-    tokens = tokenizer.encode(diff)
-    tokens = tokens[:7999]
-    diff = tokenizer.decode(tokens)
-    prompt = "Create a commit message based on this diff, max 15 words\n\n" + diff
-    data = {
-        "model": "mistral",
-        "prompt": "{prompt}".format(prompt=prompt),
-    }
-    model_inputs = tokenizer([prompt], return_tensors="pt").to(device)
-    model.to(device)
-    generated_ids = model.generate(**model_inputs, max_new_tokens=100, do_sample=True)
-    result = tokenizer.batch_decode(generated_ids)[0]
-    print("Commit message: ", result)
-    x = input("Press enter to continue")
-    return result
-
+def generate_commit_message_globe_server(diff):
+    data = {"diff": diff}
+    response = requests.post("http://globe.engineer/api/scommit-server", json=data)
+    commit_message = response.text.strip()
+    return commit_message
 
 def format_diff(diff):
     added = []
@@ -114,6 +95,7 @@ def scommit():
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', type=str, help='Commit message')
     parser.add_argument('-mi', action='store_true', help='Using mistral')
+    parser.add_argument('-globe-server', action='store_true', help='Using globe server')
     args, unknown = parser.parse_known_args()
 
     try:
@@ -127,6 +109,12 @@ def scommit():
         diff = subprocess.check_output(['git', 'diff', 'HEAD'] + unknown, text=True).strip()
         formatted_diff = format_diff(diff)
         message = generate_commit_message_mistral(formatted_diff)
+        message = message.replace('"', '\\"')
+    
+    elif commits_exist and args.globe_server:
+        diff = subprocess.check_output(['git', 'diff', 'HEAD'] + unknown, text=True).strip()
+        formatted_diff = format_diff(diff)
+        message = generate_commit_message_globe_server(formatted_diff)
         message = message.replace('"', '\\"')
     
     elif args.m is None and commits_exist:
