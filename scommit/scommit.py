@@ -30,7 +30,7 @@ def generate_commit_message_mistral(diff):
     tokens = tokenizer.encode(diff)
     tokens = tokens[:7999]
     diff = tokenizer.decode(tokens)
-    prompt = "You are given the output of a git diff. Your task is to create a descriptive commit message based on this diff, max 15 words\n\n" + diff
+    prompt = "You are given the output of a git diff.Your task is to create a descriptive commit message based on this diff, max 15 words\n\n" + diff
     data = {
         "model": "mistral",
         "prompt": "{prompt}".format(prompt=prompt),
