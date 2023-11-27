@@ -26,6 +26,14 @@ git commit -a -m "auto-generated commit message"
 
 Think of `scommit` as an alias for `git commit` that appends `-m "message"` with an auto-generated message. That's it! I recommend using this when you don't actually care about commit messages, but want them to be slightly more informative than "sdflskdjafks". Plus, it uses more GPU's than regular commits, and we all know GPU usage is a proxy for agency.
 
+In addition, you can use the `-mi` option with `scommit` to run it locally using Ollama. For example:
+
+```bash
+scommit -mi
+```
+
+This will run `scommit` locally using Ollama instead of making a request to the ChatGPT API.
+
 ## Installation
 ```bash
 pip install semantic-commit
