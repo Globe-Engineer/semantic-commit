@@ -133,7 +133,8 @@ def scommit():
     
     elif args.m is None and commits_exist:
         diff = subprocess.check_output(['git', 'diff', 'HEAD'] + unknown, text=True).strip()
-        message = generate_commit_message_gpt(diff)
+        formatted_diff = format_diff(diff)
+        message = generate_commit_message_gpt(formatted_diff)
 
     else:
         message = args.m if args.m is not None else 'Initial commit'
