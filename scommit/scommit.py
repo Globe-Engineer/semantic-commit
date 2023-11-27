@@ -69,6 +69,19 @@ def wip_hf_mistral2(diff):
     x = input("Press enter to continue")
     return result
 
+
+def format_diff(diff):
+    added = []
+    removed = []
+    lines = diff.split('\n')
+    for line in lines:
+        if line.startswith('+'):
+            added.append(line)
+        elif line.startswith('-'):
+            removed.append(line)
+    formatted_diff = 'ADDED:\n' + '\n'.join(added) + '\nREMOVED:\n' + '\n'.join(removed)
+    return formatted_diff
+
 def generate_commit_message_gpt(diff):
     """Generate commit message using OpenAI's ChatGPT."""
 
@@ -113,8 +126,9 @@ def scommit():
 
     if commits_exist and args.mi:
         diff = subprocess.check_output(['git', 'diff', 'HEAD'] + unknown, text=True).strip()
-        print(diff)
-        message = generate_commit_message_mistral(diff)
+        formatted_diff = format_diff(diff)
+        print(formatted_diff)
+        message = generate_commit_message_mistral(formatted_diff)
         message = message.replace('"', '\\"')
     
     elif args.m is None and commits_exist:
