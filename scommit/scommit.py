@@ -41,7 +41,6 @@ def generate_commit_message_mistral(diff):
     json_strings = response.text.strip().split('\n')
     responses = [json.loads(js)["response"] for js in json_strings]
     result = "".join(responses)
-    print("Commit message: ", result)
 
     return result
     
@@ -127,7 +126,6 @@ def scommit():
     if commits_exist and args.mi:
         diff = subprocess.check_output(['git', 'diff', 'HEAD'] + unknown, text=True).strip()
         formatted_diff = format_diff(diff)
-        print(formatted_diff)
         message = generate_commit_message_mistral(formatted_diff)
         message = message.replace('"', '\\"')
     
