@@ -10,7 +10,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/Globe-Knowledge-Solutions/semantic-commit',
-    author='Ivan Yevenko, Brian Machad, Parth Sareen',
+    author='Ivan Yevenko, Brian Machado, Parth Sareen',
     author_email='ivan@globe.engineer, psareen@uwaterloo.ca',
     license='MIT',
     packages=find_packages(),
