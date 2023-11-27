@@ -32,6 +32,7 @@ def generate_commit_message_mistral(diff):
     diff = tokenizer.decode(tokens)
     prompt = "You are given the output of a git diff. Your task is to create a descriptive commit message based on this diff, max 15 words\n\n" + diff
     data = {
+        "system": "You generate commit messages from a git diff that is provided to you. It is your job to create a descriptive commit message based on this diff. Do not include the diff in your commit message. Only include the commit message.",
         "model": "mistral",
         "prompt": "{prompt}".format(prompt=prompt),
         "stream": False,
