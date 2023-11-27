@@ -111,7 +111,6 @@ def scommit():
         commits_exist = False
 
     if commits_exist and args.mi:
-        print('wat')
         diff = subprocess.check_output(['git', 'diff', 'HEAD'], text=True).strip()
         message = generate_commit_message_mistral(diff)
         message = message.replace('"', '\\"')
@@ -123,7 +122,7 @@ def scommit():
     else:
         message = args.m if args.m is not None else 'Initial commit'
 
-    cmd = f'git commit -m "{message}"'
+    cmd = f'git commit {" ".join(unknown)} -m "{message}"'
     os.system(cmd)
     
 
