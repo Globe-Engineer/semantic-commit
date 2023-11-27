@@ -123,6 +123,7 @@ def scommit():
         message = args.m if args.m is not None else 'Initial commit'
 
     cmd = f'git commit {" ".join(unknown)} -m "{message}"'
+    print(cmd)
     os.system(cmd)
     
 
