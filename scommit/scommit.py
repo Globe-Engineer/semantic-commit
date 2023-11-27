@@ -111,12 +111,12 @@ def scommit():
         commits_exist = False
 
     if commits_exist and args.mi:
-        diff = subprocess.check_output(['git', 'diff', 'HEAD'], text=True).strip()
+        diff = subprocess.check_output(['git', 'diff', 'HEAD'] + unknown, text=True).strip()
         message = generate_commit_message_mistral(diff)
         message = message.replace('"', '\\"')
     
     elif args.m is None and commits_exist:
-        diff = subprocess.check_output(['git', 'diff', 'HEAD'], text=True).strip()
+        diff = subprocess.check_output(['git', 'diff', 'HEAD'] + unknown, text=True).strip()
         message = generate_commit_message_gpt(diff)
 
     else:
