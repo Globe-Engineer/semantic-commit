@@ -50,3 +50,6 @@ export OPENAI_API_KEY=your-api-key
 ## License
 
 This project is licensed under the terms of the MIT license. See the [LICENSE](LICENSE) file for details.
+
+---
+Made by Ivan Yevenko, Brian Machado and Parth Sareen
