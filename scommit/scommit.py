@@ -86,7 +86,7 @@ def generate_commit_message_gpt(diff):
     """Generate commit message using OpenAI's ChatGPT."""
 
     client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
-    tokenizer = tiktoken.encoding_for_model('gpt-4o')
+    tokenizer = tiktoken.encoding_for_model('gpt-3.5-turbo')
 
     if len(diff) == 0:
         return 'default commit message'
