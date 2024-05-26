@@ -32,7 +32,27 @@ def generate_commit_message_mistral(diff):
     diff = tokenizer.decode(tokens)
     prompt = "You are given the output of a git diff. Your task is to create a descriptive commit message based on this diff, max 15 words\n\n" + diff
     data = {
-        "system": "You generate commit messages from a git diff that is provided to you. It is your job to create a descriptive commit message based on this diff. Do not include the diff in your commit message. Only include the commit message. The most important thing is to ensure you are only describing the changes that are marked with + or - in the diff. Do not include any other changes in your commit message.",
+        "system": """You generate commit messages from a git diff that is provided to you. It is your job to create a descriptive commit message based on this diff. Do not include the diff in your commit message. Only include the commit message. The most important thing is to ensure you are only describing the changes that are marked with + or - in the diff. Do not include any other changes in your commit message. Here are some examples:
+Commit message with description and breaking change footer
+feat: allow provided config object to extend other configs
+
+BREAKING CHANGE: `extends` key in config file is now used for extending other config files
+Commit message with ! to draw attention to breaking change
+feat!: send an email to the customer when a product is shipped
+Commit message with scope and ! to draw attention to breaking change
+feat(api)!: send an email to the customer when a product is shipped
+Commit message with both ! and BREAKING CHANGE footer
+chore!: drop support for Node 6
+
+BREAKING CHANGE: use JavaScript features not available in Node 6.
+Commit message with no body
+docs: correct spelling of CHANGELOG
+Commit message with scope
+feat(lang): add Polish language
+Commit message with multi-paragraph body and multiple footers
+fix: prevent racing of requests
+
+Refs: #123""",
         "model": "mistral",
         "prompt": "{prompt}".format(prompt=prompt),
         "stream": False,
@@ -77,12 +97,32 @@ def generate_commit_message_gpt(diff):
     prompt = "Can you commit this diff for me:\n\n" + diff
 
     response = client.chat.completions.create(messages=[
-        {'role': 'system', 'content': "You call the git commit function with short and informative commit messages"},
+        {'role': 'system', 'content': """You call the git commit function with short and informative commit messages. Here are some examples:
+Commit message with description and breaking change footer
+feat: allow provided config object to extend other configs
+
+BREAKING CHANGE: `extends` key in config file is now used for extending other config files
+Commit message with ! to draw attention to breaking change
+feat!: send an email to the customer when a product is shipped
+Commit message with scope and ! to draw attention to breaking change
+feat(api)!: send an email to the customer when a product is shipped
+Commit message with both ! and BREAKING CHANGE footer
+chore!: drop support for Node 6
+
+BREAKING CHANGE: use JavaScript features not available in Node 6.
+Commit message with no body
+docs: correct spelling of CHANGELOG
+Commit message with scope
+feat(lang): add Polish language
+Commit message with multi-paragraph body and multiple footers
+fix: prevent racing of requests
+
+Refs: #123"""},
         {'role': 'user', 'content': prompt},
     ],
     functions=[commit_schema],
     function_call={'name': 'git_commit'},
-    model='gpt-3.5-turbo-16k',
+    model='gpt-4o',
     temperature=0.5)
     args = json.loads(response.choices[0].message.function_call.arguments)
     commit_message = args['commit_message']
