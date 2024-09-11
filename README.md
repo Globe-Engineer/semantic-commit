@@ -34,7 +34,18 @@ scommit -mi
 
 This will run `scommit` locally using Ollama instead of making a request to the ChatGPT API.
 
+## Using the `gasp` command
+
+The `gasp` command is a convenient way to perform `git add .`, `scommit`, and `git push` in one go. To use it, simply run:
+
+```bash
+gasp
+```
+
+This will add all changes, generate a commit message, and push the changes to the remote repository.
+
 ## Installation
+
 ```bash
 pip install semantic-commit
 ```
@@ -52,4 +63,5 @@ export OPENAI_API_KEY=your-api-key
 This project is licensed under the terms of the MIT license. See the [LICENSE](LICENSE) file for details.
 
 ---
+
 Made by Ivan Yevenko, Brian Machado and Parth Sareen
