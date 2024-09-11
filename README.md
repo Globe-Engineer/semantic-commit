@@ -39,7 +39,13 @@ This will run `scommit` locally using Ollama instead of making a request to the 
 The `gasp` command is a convenient way to perform `git add .`, `scommit`, and `git push` in one go. To use it, simply run:
 
 ```bash
-gasp
+scommit gasp
+```
+
+or
+
+```bash
+scommit --gasp
 ```
 
 This will add all changes, generate a commit message, and push the changes to the remote repository.
