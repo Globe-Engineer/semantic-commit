@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as f:
 
 setup(
     name='semantic-commit',
-    version='1.2.0',
+    version='1.3.0',
     description='scommit: ChatGPT-generated commit messages',
     long_description=long_description,
     long_description_content_type='text/markdown',
